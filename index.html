@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Magic Name Animation</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#090979,#020024,#5b247a);
+    color: white;
+    overflow: hidden;
+}
+
+.container {
+    width: 90%;
+    max-width: 450px;
+    text-align: center;
+    padding: 30px 20px;
+    border-radius: 25px;
+    background: rgba(255,255,255,0.10);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 0 40px rgba(255,255,255,.15);
+}
+
+h1 {
+    font-size: 30px;
+    margin-bottom: 12px;
+}
+
+p {
+    color: #ddd;
+    margin-bottom: 25px;
+}
+
+input {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #aaa;
+    outline: none;
+    border-radius: 12px;
+    font-size: 17px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(90deg,#ff00cc,#3333ff);
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .3s;
+}
+
+button:active {
+    transform: scale(.95);
+}
+
+#result {
+    margin-top: 40px;
+    min-height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    overflow-wrap: anywhere;
+}
+
+.name {
+    font-size: clamp(25px, 8vw, 48px);
+    font-weight: bold;
+    text-shadow: 0 0 15px white;
+}
+
+/* Animation 1 */
+.a1 {
+    animation: zoom 1.5s ease forwards;
+}
+@keyframes zoom {
+    0% {transform: scale(0) rotate(-180deg);opacity:0;}
+    70% {transform: scale(1.3);opacity:1;}
+    100% {transform: scale(1) rotate(0);}
+}
+
+/* Animation 2 */
+.a2 {
+    animation: slide 1.5s ease forwards;
+}
+@keyframes slide {
+    from {transform: translateX(-100vw);opacity:0;}
+    to {transform: translateX(0);opacity:1;}
+}
+
+/* Animation 3 */
+.a3 {
+    animation: rotate 2s ease forwards;
+}
+@keyframes rotate {
+    from {transform: rotateY(720deg) scale(0);opacity:0;}
+    to {transform: rotateY(0) scale(1);opacity:1;}
+}
+
+/* Animation 4 */
+.a4 {
+    animation: bounce 1.5s ease forwards;
+}
+@keyframes bounce {
+    0% {transform: translateY(-200px);opacity:0;}
+    60% {transform: translateY(30px);opacity:1;}
+    80% {transform: translateY(-15px);}
+    100% {transform: translateY(0);}
+}
+
+/* Animation 5 */
+.a5 {
+    animation: glow 2s ease forwards;
+}
+@keyframes glow {
+    0% {opacity:0;letter-spacing: -15px;filter:blur(15px);}
+    100% {opacity:1;letter-spacing: 4px;filter:blur(0);}
+}
+
+/* Animation 6 */
+.a6 {
+    animation: flip 1.5s ease forwards;
+}
+@keyframes flip {
+    from {transform: perspective(400px) rotateX(90deg);opacity:0;}
+    to {transform: perspective(400px) rotateX(0);opacity:1;}
+}
+
+.particle {
+    position: fixed;
+    pointer-events: none;
+    animation: fly 2s ease-out forwards;
+    font-size: 25px;
+}
+
+@keyframes fly {
+    0% {transform: translate(0,0) scale(0);opacity:1;}
+    100% {transform: translate(var(--x),var(--y)) scale(1.5);opacity:0;}
+}
+
+.hidden {
+    display:none !important;
+}
+
+#again {
+    margin-top: 25px;
+    background: linear-gradient(90deg,#00c9ff,#92fe9d);
+    color: #111;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>✨ Magic Name ✨</h1>
+    <p>Enter your name and discover your magic!</p>
+
+    <input
+        type="text"
+        id="username"
+        placeholder="Enter Your Name..."
+        maxlength="30"
+    >
+
+    <button onclick="generateName()">🎬 Generate Magic</button>
+
+    <div id="result"></div>
+
+    <button id="again" class="hidden" onclick="generateName()">
+        🔄 Try Another Animation
+    </button>
+
+</div>
+
+<script>
+
+const animations = ["a1","a2","a3","a4","a5","a6"];
+
+const colors = [
+    "#ff00cc",
+    "#00ffff",
+    "#ffff00",
+    "#ff6600",
+    "#00ff99",
+    "#ff66ff",
+    "#ffffff"
+];
+
+function generateName() {
+
+    const input = document.getElementById("username");
+    const result = document.getElementById("result");
+    const again = document.getElementById("again");
+
+    const name = input.value.trim();
+
+    if (!name) {
+        alert("Please enter your name!");
+        input.focus();
+        return;
+    }
+
+    result.innerHTML = "";
+    again.classList.add("hidden");
+
+    // Random animation
+    const animation =
+        animations[Math.floor(Math.random() * animations.length)];
+
+    // Random color
+    const color =
+        colors[Math.floor(Math.random() * colors.length)];
+
+    const nameElement = document.createElement("div");
+
+    nameElement.className = "name " + animation;
+    nameElement.textContent = name;
+    nameElement.style.color = color;
+
+    result.appendChild(nameElement);
+
+    // Magical particles
+    for (let i = 0; i < 25; i++) {
+
+        const particle = document.createElement("div");
+
+        particle.className = "particle";
+        particle.textContent = ["✨","⭐","💖","🌟","🔥"][
+            Math.floor(Math.random() * 5)
+        ];
+
+        particle.style.left = "50%";
+        particle.style.top = "50%";
+
+        particle.style.setProperty(
+            "--x", (Math.random() * 400 - 200) + "px"
+        );
+
+        particle.style.setProperty(
+            "--y", (Math.random() * 400 - 200) + "px"
+        );
+
+        document.body.appendChild(particle);
+
+        setTimeout(() => particle.remove(), 2200);
+    }
+
+    again.classList.remove("hidden");
+}
+
+document.getElementById("username").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+        generateName();
+    }
+});
+
+</script>
+
+</body>
+  </html>
