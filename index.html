@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Magic Name Animation</title>
+<title>AI Lyrics Video Generator</title>
 
 <style>
 * {
@@ -13,270 +13,577 @@
 }
 
 body {
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg,#090979,#020024,#5b247a);
+    background: #080812;
     color: white;
-    overflow: hidden;
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+}
+
+header {
+    text-align: center;
+    padding: 25px 10px;
+    background: linear-gradient(90deg,#6200ea,#d500f9);
+}
+
+header h1 {
+    font-size: 27px;
+}
+
+header p {
+    margin-top: 8px;
+    color: #eee;
 }
 
 .container {
-    width: 90%;
-    max-width: 450px;
-    text-align: center;
-    padding: 30px 20px;
-    border-radius: 25px;
-    background: rgba(255,255,255,0.10);
-    backdrop-filter: blur(15px);
-    box-shadow: 0 0 40px rgba(255,255,255,.15);
+    max-width: 950px;
+    margin: auto;
+    padding: 20px;
 }
 
-h1 {
-    font-size: 30px;
-    margin-bottom: 12px;
+.card {
+    background: #151525;
+    padding: 22px;
+    border-radius: 18px;
+    margin-bottom: 20px;
+    border: 1px solid #292943;
 }
 
-p {
-    color: #ddd;
-    margin-bottom: 25px;
+label {
+    display: block;
+    margin: 15px 0 8px;
+    font-weight: bold;
 }
 
-input {
+input, textarea, select {
     width: 100%;
-    padding: 15px;
-    border: 2px solid #aaa;
-    outline: none;
-    border-radius: 12px;
-    font-size: 17px;
-    text-align: center;
-    margin-bottom: 15px;
+    padding: 13px;
+    background: #222238;
+    border: 1px solid #41415c;
+    color: white;
+    border-radius: 9px;
+    font-size: 15px;
+}
+
+textarea {
+    height: 180px;
+    resize: vertical;
 }
 
 button {
-    width: 100%;
-    padding: 15px;
     border: none;
-    border-radius: 12px;
-    background: linear-gradient(90deg,#ff00cc,#3333ff);
-    color: white;
-    font-size: 18px;
+    padding: 14px;
+    border-radius: 10px;
     font-weight: bold;
     cursor: pointer;
+    font-size: 15px;
     transition: .3s;
 }
 
-button:active {
-    transform: scale(.95);
+button:hover {
+    transform: scale(1.03);
 }
 
-#result {
-    margin-top: 40px;
-    min-height: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    overflow-wrap: anywhere;
+.generate {
+    width: 100%;
+    margin-top: 20px;
+    background: linear-gradient(90deg,#8e2de2,#ff0080);
+    color: white;
 }
 
-.name {
-    font-size: clamp(25px, 8vw, 48px);
-    font-weight: bold;
-    text-shadow: 0 0 15px white;
+.download {
+    width: 100%;
+    margin-top: 12px;
+    background: #00c853;
+    color: white;
+    display: none;
 }
 
-/* Animation 1 */
-.a1 {
-    animation: zoom 1.5s ease forwards;
-}
-@keyframes zoom {
-    0% {transform: scale(0) rotate(-180deg);opacity:0;}
-    70% {transform: scale(1.3);opacity:1;}
-    100% {transform: scale(1) rotate(0);}
+.preview {
+    background: black;
+    border-radius: 15px;
+    overflow: hidden;
+    text-align: center;
 }
 
-/* Animation 2 */
-.a2 {
-    animation: slide 1.5s ease forwards;
-}
-@keyframes slide {
-    from {transform: translateX(-100vw);opacity:0;}
-    to {transform: translateX(0);opacity:1;}
+canvas {
+    width: 100%;
+    display: block;
 }
 
-/* Animation 3 */
-.a3 {
-    animation: rotate 2s ease forwards;
-}
-@keyframes rotate {
-    from {transform: rotateY(720deg) scale(0);opacity:0;}
-    to {transform: rotateY(0) scale(1);opacity:1;}
+.status {
+    color: #00e676;
+    text-align: center;
+    margin-top: 15px;
+    min-height: 22px;
 }
 
-/* Animation 4 */
-.a4 {
-    animation: bounce 1.5s ease forwards;
-}
-@keyframes bounce {
-    0% {transform: translateY(-200px);opacity:0;}
-    60% {transform: translateY(30px);opacity:1;}
-    80% {transform: translateY(-15px);}
-    100% {transform: translateY(0);}
+.note {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 8px;
 }
 
-/* Animation 5 */
-.a5 {
-    animation: glow 2s ease forwards;
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #777;
 }
-@keyframes glow {
-    0% {opacity:0;letter-spacing: -15px;filter:blur(15px);}
-    100% {opacity:1;letter-spacing: 4px;filter:blur(0);}
-}
-
-/* Animation 6 */
-.a6 {
-    animation: flip 1.5s ease forwards;
-}
-@keyframes flip {
-    from {transform: perspective(400px) rotateX(90deg);opacity:0;}
-    to {transform: perspective(400px) rotateX(0);opacity:1;}
-}
-
-.particle {
-    position: fixed;
-    pointer-events: none;
-    animation: fly 2s ease-out forwards;
-    font-size: 25px;
-}
-
-@keyframes fly {
-    0% {transform: translate(0,0) scale(0);opacity:1;}
-    100% {transform: translate(var(--x),var(--y)) scale(1.5);opacity:0;}
-}
-
-.hidden {
-    display:none !important;
-}
-
-#again {
-    margin-top: 25px;
-    background: linear-gradient(90deg,#00c9ff,#92fe9d);
-    color: #111;
-}
-
 </style>
 </head>
 
 <body>
 
+<header>
+    <h1>🎬 AI Lyrics Video Studio</h1>
+    <p>Turn Your Lyrics Into Cinematic Videos</p>
+</header>
+
 <div class="container">
 
-    <h1>✨ Magic Name ✨</h1>
-    <p>Enter your name and discover your magic!</p>
+<div class="card">
 
-    <input
-        type="text"
-        id="username"
-        placeholder="Enter Your Name..."
-        maxlength="30"
-    >
+    <h2>✨ Create Your Video</h2>
 
-    <button onclick="generateName()">🎬 Generate Magic</button>
+    <label>Song Title</label>
+    <input type="text" id="title" placeholder="Enter song name">
 
-    <div id="result"></div>
+    <label>Paste Your Lyrics</label>
+    <textarea id="lyrics" placeholder="Paste your lyrics here...
 
-    <button id="again" class="hidden" onclick="generateName()">
-        🔄 Try Another Animation
+Example:
+Teri yaadon mein kho gaya hoon
+Raat bhar main soya nahi
+Chand bhi mujhse pooch raha hai
+Kyun tu itna udaas hai"></textarea>
+
+    <label>Video Style</label>
+    <select id="style">
+        <option value="auto">🤖 Automatic Theme</option>
+        <option value="love">❤️ Romantic</option>
+        <option value="sad">💔 Sad Cinematic</option>
+        <option value="nature">🌄 Nature</option>
+        <option value="dark">🌑 Dark Cinematic</option>
+        <option value="dream">✨ Dream World</option>
+    </select>
+
+    <label>Background Music (Optional)</label>
+    <input type="file" id="music" accept="audio/*">
+
+    <p class="note">Upload your own audio file. Video duration depends on the lyrics and selected timing.</p>
+
+    <label>Duration Per Line</label>
+    <select id="duration">
+        <option value="2">2 Seconds</option>
+        <option value="3" selected>3 Seconds</option>
+        <option value="4">4 Seconds</option>
+        <option value="5">5 Seconds</option>
+    </select>
+
+    <button class="generate" onclick="startVideo()">
+        🚀 Generate Cinematic Video
     </button>
 
 </div>
 
+<div class="card">
+
+    <h2>🎥 Video Preview</h2>
+
+    <div class="preview">
+        <canvas id="canvas" width="1080" height="1920"></canvas>
+    </div>
+
+    <div class="status" id="status">
+        Ready to create your video.
+    </div>
+
+    <button class="download" id="download">
+        ⬇ Download Video
+    </button>
+
+</div>
+
+</div>
+
+<footer>
+    AI Lyrics Video Studio | Version 1.0
+</footer>
+
 <script>
 
-const animations = ["a1","a2","a3","a4","a5","a6"];
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
 
-const colors = [
-    "#ff00cc",
-    "#00ffff",
-    "#ffff00",
-    "#ff6600",
-    "#00ff99",
-    "#ff66ff",
-    "#ffffff"
-];
+let lines = [];
+let currentLine = 0;
+let startTime = 0;
+let duration = 3;
+let recording = false;
+let recorder;
+let chunks = [];
+let particles = [];
+let currentTheme = "dream";
+let audioElement = null;
+let animationFrame;
 
-function generateName() {
+const themes = {
+    love: ["#ff416c","#ff4b2b","#833ab4"],
+    sad: ["#141e30","#243b55","#000428"],
+    nature: ["#134e5e","#71b280","#203a43"],
+    dark: ["#000000","#232526","#414345"],
+    dream: ["#654ea3","#eaafc8","#243b55"]
+};
 
-    const input = document.getElementById("username");
-    const result = document.getElementById("result");
-    const again = document.getElementById("again");
+function randomColor() {
+    return ["#ffffff","#ffdd57","#ff80ab","#80d8ff","#e1bee7"][
+        Math.floor(Math.random()*5)
+    ];
+}
 
-    const name = input.value.trim();
+function detectTheme(line) {
 
-    if (!name) {
-        alert("Please enter your name!");
-        input.focus();
+    const text = line.toLowerCase();
+
+    if (/love|pyar|ishq|dil|mohabbat|jaan|teri|sanam|prem/.test(text))
+        return "love";
+
+    if (/sad|udaas|rona|aansu|tanha|dard|yaad|broken|akela/.test(text))
+        return "sad";
+
+    if (/moon|chand|raat|sky|aasman|nature|phool|baarish|sun/.test(text))
+        return "nature";
+
+    if (/dark|andhera|shadow|fear|night|khauf/.test(text))
+        return "dark";
+
+    return ["love","sad","nature","dark","dream"][
+        Math.floor(Math.random()*5)
+    ];
+}
+
+function createParticles() {
+
+    particles = [];
+
+    for(let i=0;i<75;i++) {
+        particles.push({
+            x: Math.random()*1080,
+            y: Math.random()*1920,
+            size: Math.random()*5+2,
+            speed: Math.random()*2+0.5,
+            alpha: Math.random()
+        });
+    }
+}
+
+function drawBackground(time) {
+
+    const colors = themes[currentTheme] || themes.dream;
+
+    const gradient = ctx.createLinearGradient(
+        0,0,
+        1080,1920
+    );
+
+    gradient.addColorStop(0,colors[0]);
+    gradient.addColorStop(0.5,colors[1]);
+    gradient.addColorStop(1,colors[2]);
+
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0,0,1080,1920);
+
+    // Animated light circles
+
+    for(let i=0;i<5;i++) {
+
+        let x = 540 + Math.sin(time/1500+i*2)*350;
+        let y = 960 + Math.cos(time/1700+i)*600;
+
+        let glow = ctx.createRadialGradient(x,y,10,x,y,350);
+
+        glow.addColorStop(0,"rgba(255,255,255,0.13)");
+        glow.addColorStop(1,"rgba(255,255,255,0)");
+
+        ctx.fillStyle = glow;
+        ctx.fillRect(x-350,y-350,700,700);
+    }
+
+    // Floating particles
+
+    particles.forEach(p => {
+
+        p.y -= p.speed;
+
+        if(p.y < 0) p.y = 1920;
+
+        ctx.globalAlpha = p.alpha;
+
+        ctx.fillStyle = "#ffffff";
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
+        ctx.fill();
+
+    });
+
+    ctx.globalAlpha = 1;
+}
+
+function drawText(line,time) {
+
+    const elapsed = time - startTime;
+
+    let progress = Math.min(elapsed/800,1);
+
+    ctx.save();
+
+    ctx.translate(540,960);
+
+    const scale = 0.7 + progress*0.3;
+
+    ctx.scale(scale,scale);
+
+    ctx.globalAlpha = progress;
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    let words = line.split(" ");
+    let rows = [];
+    let row = "";
+
+    ctx.font = "bold 75px Arial";
+
+    words.forEach(word => {
+
+        let test = row ? row+" "+word : word;
+
+        if(ctx.measureText(test).width > 850) {
+            rows.push(row);
+            row = word;
+        } else {
+            row = test;
+        }
+
+    });
+
+    if(row) rows.push(row);
+
+    let lineHeight = 105;
+    let startY = -(rows.length-1)*lineHeight/2;
+
+    rows.forEach((text,index) => {
+
+        ctx.shadowColor = randomColor();
+        ctx.shadowBlur = 35;
+
+        ctx.fillStyle = "#ffffff";
+
+        ctx.fillText(
+            text,
+            0,
+            startY+index*lineHeight
+        );
+
+    });
+
+    ctx.restore();
+
+}
+
+function render() {
+
+    if(!recording) return;
+
+    let now = performance.now();
+
+    let elapsed = now - startTime;
+
+    let index = Math.floor(elapsed/(duration*1000));
+
+    if(index >= lines.length) {
+        stopRecording();
         return;
     }
 
-    result.innerHTML = "";
-    again.classList.add("hidden");
+    if(index !== currentLine) {
 
-    // Random animation
-    const animation =
-        animations[Math.floor(Math.random() * animations.length)];
+        currentLine = index;
 
-    // Random color
-    const color =
-        colors[Math.floor(Math.random() * colors.length)];
+        currentTheme =
+            document.getElementById("style").value === "auto"
+            ? detectTheme(lines[index])
+            : document.getElementById("style").value;
 
-    const nameElement = document.createElement("div");
-
-    nameElement.className = "name " + animation;
-    nameElement.textContent = name;
-    nameElement.style.color = color;
-
-    result.appendChild(nameElement);
-
-    // Magical particles
-    for (let i = 0; i < 25; i++) {
-
-        const particle = document.createElement("div");
-
-        particle.className = "particle";
-        particle.textContent = ["✨","⭐","💖","🌟","🔥"][
-            Math.floor(Math.random() * 5)
-        ];
-
-        particle.style.left = "50%";
-        particle.style.top = "50%";
-
-        particle.style.setProperty(
-            "--x", (Math.random() * 400 - 200) + "px"
-        );
-
-        particle.style.setProperty(
-            "--y", (Math.random() * 400 - 200) + "px"
-        );
-
-        document.body.appendChild(particle);
-
-        setTimeout(() => particle.remove(), 2200);
+        createParticles();
     }
 
-    again.classList.remove("hidden");
+    drawBackground(now);
+
+    // Song title
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = "rgba(255,255,255,0.8)";
+    ctx.font = "bold 42px Arial";
+
+    ctx.fillText(
+        document.getElementById("title").value || "MY SONG",
+        540,180
+    );
+
+    // Lyrics
+
+    drawText(lines[currentLine],now);
+
+    // Footer
+
+    ctx.fillStyle = "rgba(255,255,255,0.6)";
+    ctx.font = "30px Arial";
+    ctx.fillText("♪ LYRICS VIDEO ♪",540,1740);
+
+    animationFrame = requestAnimationFrame(render);
 }
 
-document.getElementById("username").addEventListener("keypress", function(e) {
-    if (e.key === "Enter") {
-        generateName();
+async function startVideo() {
+
+    const lyrics = document.getElementById("lyrics").value.trim();
+
+    if(!lyrics) {
+        alert("Please paste your lyrics first!");
+        return;
     }
-});
+
+    if(recording) return;
+
+    lines = lyrics.split(/\n/).map(x=>x.trim()).filter(Boolean);
+
+    if(lines.length === 0) return;
+
+    duration = Number(document.getElementById("duration").value);
+
+    currentLine = 0;
+
+    currentTheme =
+        document.getElementById("style").value === "auto"
+        ? detectTheme(lines[0])
+        : document.getElementById("style").value;
+
+    createParticles();
+
+    const stream = canvas.captureStream(30);
+
+    const musicFile = document.getElementById("music").files[0];
+
+    if(musicFile) {
+
+        try {
+
+            if(audioElement) {
+                audioElement.pause();
+                audioElement = null;
+            }
+
+            audioElement = new Audio();
+
+            audioElement.src = URL.createObjectURL(musicFile);
+            audioElement.loop = false;
+
+            audioElement.muted = false;
+
+            const audioStream =
+                audioElement.captureStream();
+
+            const audioTracks = audioStream.getAudioTracks();
+
+            audioTracks.forEach(track => stream.addTrack(track));
+
+            await audioElement.play();
+
+        } catch(error) {
+
+            console.log("Audio capture unavailable:",error);
+
+        }
+    }
+
+    let mime = MediaRecorder.isTypeSupported("video/webm;codecs=vp9")
+        ? "video/webm;codecs=vp9"
+        : "video/webm";
+
+    chunks = [];
+
+    try {
+
+        recorder = new MediaRecorder(stream,{
+            mimeType:mime
+        });
+
+    } catch(error) {
+
+        alert("Video recording is not supported in this browser.");
+        return;
+
+    }
+
+    recorder.ondataavailable = e => {
+        if(e.data.size > 0) chunks.push(e.data);
+    };
+
+    recorder.onstop = () => {
+
+        const blob = new Blob(chunks,{type:"video/webm"});
+
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+
+        a.href = url;
+        a.download = "My-Lyrics-Video.webm";
+
+        document.getElementById("download").onclick = () => {
+            a.click();
+        };
+
+        document.getElementById("download").style.display = "block";
+
+        document.getElementById("status").innerText =
+            "✅ Video generated successfully!";
+
+        if(audioElement) audioElement.pause();
+
+        stream.getTracks().forEach(t=>t.stop());
+
+    };
+
+    recording = true;
+
+    document.getElementById("download").style.display = "none";
+
+    document.getElementById("status").innerText =
+        "🎬 Creating your cinematic video...";
+
+    startTime = performance.now();
+
+    recorder.start();
+
+    render();
+
+}
+
+function stopRecording() {
+
+    recording = false;
+
+    cancelAnimationFrame(animationFrame);
+
+    if(recorder && recorder.state === "recording") {
+        recorder.stop();
+    }
+
+}
+
+drawBackground(0);
 
 </script>
 
 </body>
-  </html>
+                                           </html>
