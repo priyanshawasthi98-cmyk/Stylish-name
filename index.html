@@ -3,201 +3,180 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI 3D Music Video Studio</title>
+<title>AI Lyrics To Video Generator</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box}
 
 body{
-    background:#070711;
-    color:white;
-    font-family:Arial,sans-serif;
-}
-
-header{
-    padding:30px 15px;
-    text-align:center;
-    background:linear-gradient(120deg,#6500ff,#ed00ff,#001aff);
-}
-
-header h1{
-    font-size:27px;
-    margin-bottom:10px;
+ background:#080b16;
+ color:white;
+ font-family:Arial,sans-serif;
+ min-height:100vh;
+ padding:20px;
 }
 
 .container{
-    max-width:900px;
-    margin:auto;
-    padding:20px;
+ max-width:900px;
+ margin:auto;
 }
 
+header{
+ text-align:center;
+ padding:25px 10px;
+}
+
+header h1{
+ font-size:30px;
+ background:linear-gradient(90deg,#00eaff,#b66bff);
+ -webkit-background-clip:text;
+ color:transparent;
+}
+
+header p{color:#aaa;margin-top:10px}
+
 .card{
-    background:#151526;
-    padding:22px;
-    border-radius:18px;
-    margin-bottom:22px;
-    border:1px solid #33334d;
+ background:#11182b;
+ border:1px solid #283552;
+ border-radius:16px;
+ padding:20px;
+ margin-bottom:20px;
 }
 
 label{
-    display:block;
-    margin:18px 0 8px;
-    font-weight:bold;
+ display:block;
+ margin:15px 0 8px;
+ color:#c9d5ff;
 }
 
 input,textarea,select{
-    width:100%;
-    padding:14px;
-    background:#24243b;
-    color:white;
-    border:1px solid #454563;
-    border-radius:10px;
-    font-size:15px;
+ width:100%;
+ padding:13px;
+ border-radius:9px;
+ border:1px solid #34415f;
+ background:#080d1c;
+ color:white;
+ font-size:15px;
 }
 
 textarea{
-    height:180px;
-    resize:vertical;
+ min-height:150px;
+ resize:vertical;
 }
 
 button{
-    width:100%;
-    padding:15px;
-    margin-top:18px;
-    border:none;
-    border-radius:10px;
-    background:linear-gradient(90deg,#8e2de2,#ff0080);
-    color:white;
-    font-size:16px;
-    font-weight:bold;
-    cursor:pointer;
+ border:0;
+ padding:14px 20px;
+ border-radius:10px;
+ color:white;
+ font-weight:bold;
+ font-size:15px;
+ cursor:pointer;
+ background:linear-gradient(90deg,#087cff,#9b4dff);
+ margin-top:15px;
 }
 
 button:disabled{
-    opacity:.5;
+ opacity:.4;
+ cursor:not-allowed;
 }
 
-.download{
-    background:linear-gradient(90deg,#00b09b,#96c93d);
-    display:none;
+button.secondary{
+ background:#27334f;
+}
+
+#status{
+ color:#00eaff;
+ margin-top:15px;
+ line-height:1.5;
 }
 
 .preview{
-    width:100%;
-    max-width:350px;
-    margin:20px auto;
-    overflow:hidden;
-    border-radius:15px;
-    background:black;
+ width:100%;
+ max-width:400px;
+ margin:20px auto;
+ aspect-ratio:9/16;
+ background:#000;
+ border-radius:15px;
+ overflow:hidden;
+ position:relative;
+ border:2px solid #46557c;
 }
 
-canvas{
-    width:100%;
-    display:block;
+#outputCanvas{
+ width:100%;
+ height:100%;
+ display:block;
 }
 
-.status{
-    text-align:center;
-    color:#00ffbb;
-    margin-top:15px;
-    line-height:1.6;
+.controls{
+ display:flex;
+ flex-wrap:wrap;
+ gap:10px;
 }
 
-.note{
-    font-size:12px;
-    color:#aaa;
-    margin-top:8px;
-    line-height:1.5;
+.controls button{
+ flex:1;
+ min-width:130px;
 }
 
-.progress{
-    width:100%;
-    height:8px;
-    background:#333;
-    border-radius:10px;
-    overflow:hidden;
-    margin-top:15px;
-}
-
-#bar{
-    height:100%;
-    width:0%;
-    background:#00ffc3;
-}
+small{color:#aaa;line-height:1.5}
 
 footer{
-    text-align:center;
-    padding:25px;
-    color:#777;
+ text-align:center;
+ color:#777;
+ padding:20px;
+ font-size:13px;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-    <h1>🎬 AI 3D MUSIC STUDIO</h1>
-    <p>Turn Your Music Into Cinematic Visuals</p>
-</header>
-
 <div class="container">
+
+<header>
+<h1>✨ AI LYRICS TO VIDEO</h1>
+<p>Turn your lyrics into a cinematic 3D music video</p>
+</header>
 
 <div class="card">
 
-<h2>✨ Create Your Music Video</h2>
+<h2>🎵 Create Your Video</h2>
 
-<label>Song Name</label>
-<input id="title" placeholder="Enter song name">
+<label>Upload Your Song</label>
+<input type="file" id="song" accept="audio/*">
 
-<label>Upload Original Song</label>
-<input type="file" id="music" accept="audio/*">
+<label>Paste Your Lyrics</label>
+<textarea id="lyrics"
+placeholder="Paste your complete song lyrics here..."></textarea>
 
-<p class="note">
-Upload MP3, WAV or another browser-supported audio file.
-Maximum video duration is 5 minutes.
-</p>
-
-<label>Paste Song Lyrics</label>
-<textarea id="lyrics" placeholder="Paste your complete song lyrics...
-
-Teri yaadon mein kho gaya hoon
-Raat bhar main soya nahi
-Chand bhi mujhse pooch raha hai
-Kyun tu itna udaas hai"></textarea>
-
-<p class="note">
-Optional: Add timestamps to synchronize lyrics.
-Example:
-[00:05] Teri yaadon mein kho gaya hoon
-[00:10] Raat bhar main soya nahi
-
-Without timestamps, lyrics will be distributed across the song.
-</p>
-
-<label>Video Theme</label>
-<select id="theme">
-<option value="auto">🤖 Automatic Theme</option>
-<option value="love">❤️ Romantic 3D</option>
-<option value="sad">💔 Sad Cinematic</option>
-<option value="nature">🌄 Nature World</option>
-<option value="dark">🌑 Dark Fantasy</option>
-<option value="space">🌌 Space Universe</option>
-<option value="dream">✨ Dream World</option>
+<label>Video Mood</label>
+<select id="mood">
+<option value="auto">Automatic (Based on Lyrics)</option>
+<option value="sad">Sad / Emotional</option>
+<option value="romantic">Romantic</option>
+<option value="motivational">Motivational</option>
+<option value="happy">Happy</option>
+<option value="dark">Dark Cinematic</option>
 </select>
 
-<label>Visual Quality</label>
-<select id="quality">
-<option value="high">High Quality - 1080 × 1920</option>
-<option value="medium">Medium Quality - 720 × 1280</option>
+<label>Video Duration</label>
+<select id="duration">
+<option value="song">Full Song (Maximum 5 Minutes)</option>
+<option value="60">1 Minute</option>
+<option value="120">2 Minutes</option>
+<option value="180">3 Minutes</option>
 </select>
 
-<button id="generate" onclick="generateVideo()">
-🚀 GENERATE 3D MUSIC VIDEO
-</button>
+<div class="controls">
+<button id="previewBtn">▶ Start Preview</button>
+<button id="createBtn">🎬 Create Video</button>
+</div>
+
+<p id="status">Upload song and enter lyrics to begin.</p>
 
 </div>
 
@@ -206,670 +185,963 @@ Without timestamps, lyrics will be distributed across the song.
 <h2>🎥 Video Preview</h2>
 
 <div class="preview">
-<canvas id="screen" width="720" height="1280"></canvas>
+<canvas id="outputCanvas"></canvas>
 </div>
 
-<div class="progress">
-<div id="bar"></div>
+<div class="controls">
+<button id="stopBtn" class="secondary" disabled>⏹ Stop</button>
+<button id="downloadBtn" disabled>⬇ Download Video</button>
 </div>
 
-<div class="status" id="status">
-Ready to create your video.
-</div>
-
-<button class="download" id="download">
-⬇ DOWNLOAD VIDEO
-</button>
+<br>
+<small>
+Video format: WebM. The same 3D character is maintained throughout
+the animation. Internet is required to load the 3D library.
+</small>
 
 </div>
 
-</div>
+<audio id="audio" controls style="width:100%;margin-bottom:20px"></audio>
 
 <footer>
-AI 3D Music Studio | Version 2.0
+AI Lyrics To Video Generator | Single File Prototype
 </footer>
+
+</div>
 
 <script>
 
-const canvas=document.getElementById("screen");
-const ctx=canvas.getContext("2d");
+// ==================================
+// BASIC SETTINGS
+// ==================================
 
-let lines=[];
-let timedLyrics=[];
-let particles=[];
-let stars=[];
-let recording=false;
-let recorder=null;
-let chunks=[];
-let audio=null;
-let audioContext=null;
-let raf=null;
-let videoStream=null;
-let startedAt=0;
-let duration=0;
-let currentScene=-1;
-let currentTheme="dream";
-let renderWidth=720;
-let renderHeight=1280;
+const W = 720;
+const H = 1280;
 
-const themes={
-love:["#3a003e","#ff416c","#ff8a9e"],
-sad:["#081526","#243b55","#000428"],
-nature:["#134e5e","#71b280","#203a43"],
-dark:["#000000","#232526","#434343"],
-space:["#020024","#090979","#4b0082"],
-dream:["#654ea3","#eaafc8","#243b55"]
-};
+const outputCanvas = document.getElementById("outputCanvas");
+const ctx = outputCanvas.getContext("2d");
 
-function detectTheme(text){
+outputCanvas.width = W;
+outputCanvas.height = H;
 
-    text=text.toLowerCase();
+const statusText = document.getElementById("status");
 
-    if(/love|pyar|ishq|dil|mohabbat|jaan|teri|sanam|prem/.test(text))
-        return "love";
+const songInput = document.getElementById("song");
+const lyricsInput = document.getElementById("lyrics");
+const moodInput = document.getElementById("mood");
+const audio = document.getElementById("audio");
 
-    if(/sad|udaas|rona|aansu|tanha|dard|yaad|akela/.test(text))
-        return "sad";
+let renderer, scene, camera;
+let character;
+let particles = [];
+let rain = [];
+let recorder;
+let recordedChunks = [];
+let audioContext;
+let audioDestination;
+let audioSource;
 
-    if(/chand|raat|sky|aasman|phool|baarish|sun|nature/.test(text))
-        return "nature";
+let running = false;
+let recording = false;
+let animationId = null;
 
-    if(/dark|andhera|shadow|fear|khauf/.test(text))
-        return "dark";
+let lyrics = [];
+let currentLine = "";
+let startTime = 0;
+let videoLimit = 300;
 
-    if(/space|star|universe|galaxy|planet|taare/.test(text))
-        return "space";
+let currentMood = "sad";
 
-    return "dream";
+
+// ==================================
+// THREE JS INITIALIZATION
+// ==================================
+
+function initialize3D(){
+
+ if(renderer) return;
+
+ scene = new THREE.Scene();
+
+ scene.background = new THREE.Color(0x090d25);
+
+ camera = new THREE.PerspectiveCamera(
+  45,
+  W/H,
+  0.1,
+  100
+ );
+
+ camera.position.set(0,2.2,9);
+
+ renderer = new THREE.WebGLRenderer({
+  antialias:true,
+  alpha:false
+ });
+
+ renderer.setSize(W,H);
+ renderer.setPixelRatio(1);
+
+ renderer.outputEncoding = THREE.sRGBEncoding;
+
+ // Lighting
+
+ const ambient = new THREE.AmbientLight(
+  0xffffff,
+  1.2
+ );
+
+ scene.add(ambient);
+
+ const mainLight = new THREE.PointLight(
+  0x8a9cff,
+  2.5,
+  30
+ );
+
+ mainLight.position.set(3,6,5);
+ scene.add(mainLight);
+
+ const backLight = new THREE.PointLight(
+  0x00cfff,
+  3,
+  20
+ );
+
+ backLight.position.set(-4,3,-4);
+ scene.add(backLight);
+
+ createCharacter();
+ createFloor();
+ createParticles();
+ createRain();
 }
 
-function random(min,max){
-    return Math.random()*(max-min)+min;
+
+// ==================================
+// CREATE 3D CHARACTER
+// ==================================
+
+function createCharacter(){
+
+ character = new THREE.Group();
+
+ const skin = new THREE.MeshStandardMaterial({
+  color:0xd9a17f,
+  roughness:0.7
+ });
+
+ const clothes = new THREE.MeshStandardMaterial({
+  color:0x202b48,
+  roughness:0.8
+ });
+
+ const hair = new THREE.MeshStandardMaterial({
+  color:0x17151c
+ });
+
+ // Head
+
+ const head = new THREE.Mesh(
+  new THREE.SphereGeometry(0.48,32,32),
+  skin
+ );
+
+ head.position.y=2.35;
+ character.add(head);
+
+ // Hair
+
+ const hairMesh = new THREE.Mesh(
+  new THREE.SphereGeometry(
+   0.49,32,32,0,Math.PI*2,0,Math.PI/2
+  ),
+  hair
+ );
+
+ hairMesh.position.y=2.5;
+ character.add(hairMesh);
+
+ // Body
+
+ const body = new THREE.Mesh(
+  new THREE.CylinderGeometry(
+   0.48,0.7,1.35,32
+  ),
+  clothes
+ );
+
+ body.position.y=1.25;
+ character.add(body);
+
+ // Neck
+
+ const neck = new THREE.Mesh(
+  new THREE.CylinderGeometry(0.17,0.2,0.3,16),
+  skin
+ );
+
+ neck.position.y=1.98;
+ character.add(neck);
+
+ // Arms
+
+ const armGeometry = new THREE.CylinderGeometry(
+  0.13,0.16,1.15,16
+ );
+
+ const leftArm = new THREE.Mesh(
+  armGeometry,clothes
+ );
+
+ leftArm.position.set(-0.62,1.35,0);
+
+ const rightArm = new THREE.Mesh(
+  armGeometry,clothes
+ );
+
+ rightArm.position.set(0.62,1.35,0);
+
+ character.add(leftArm);
+ character.add(rightArm);
+
+ character.userData.leftArm=leftArm;
+ character.userData.rightArm=rightArm;
+
+ // Legs
+
+ const legGeometry = new THREE.CylinderGeometry(
+  0.18,0.22,1.2,16
+ );
+
+ const leftLeg = new THREE.Mesh(
+  legGeometry,clothes
+ );
+
+ leftLeg.position.set(-0.25,0.15,0);
+
+ const rightLeg = new THREE.Mesh(
+  legGeometry,clothes
+ );
+
+ rightLeg.position.set(0.25,0.15,0);
+
+ character.add(leftLeg);
+ character.add(rightLeg);
+
+ character.userData.leftLeg=leftLeg;
+ character.userData.rightLeg=rightLeg;
+
+ scene.add(character);
 }
+
+
+// ==================================
+// FLOOR
+// ==================================
+
+function createFloor(){
+
+ const geometry = new THREE.PlaneGeometry(100,100);
+
+ const material = new THREE.MeshStandardMaterial({
+  color:0x10182d,
+  roughness:0.9
+ });
+
+ const floor = new THREE.Mesh(geometry,material);
+
+ floor.rotation.x=-Math.PI/2;
+ floor.position.y=-0.48;
+
+ scene.add(floor);
+
+}
+
+
+// ==================================
+// PARTICLES
+// ==================================
 
 function createParticles(){
 
-    particles=[];
+ const geometry = new THREE.SphereGeometry(0.035,8,8);
 
-    for(let i=0;i<100;i++){
+ for(let i=0;i<120;i++){
 
-        particles.push({
-            x:random(0,renderWidth),
-            y:random(0,renderHeight),
-            size:random(1,5),
-            speed:random(.3,2),
-            alpha:random(.2,.9)
-        });
-    }
+  const material = new THREE.MeshBasicMaterial({
+   color:0x80dfff
+  });
 
-    stars=[];
+  const p = new THREE.Mesh(geometry,material);
 
-    for(let i=0;i<60;i++){
+  p.position.set(
+   (Math.random()-0.5)*12,
+   Math.random()*9,
+   (Math.random()-0.5)*8
+  );
 
-        stars.push({
-            x:random(0,renderWidth),
-            y:random(0,renderHeight),
-            size:random(1,4),
-            phase:random(0,Math.PI*2)
-        });
-    }
+  scene.add(p);
+  particles.push(p);
+ }
+
 }
 
-function background(time,theme){
 
-    const c=themes[theme]||themes.dream;
+// ==================================
+// RAIN EFFECT
+// ==================================
 
-    let gradient=ctx.createLinearGradient(
-        0,0,renderWidth,renderHeight
-    );
+function createRain(){
 
-    gradient.addColorStop(0,c[0]);
-    gradient.addColorStop(.5,c[1]);
-    gradient.addColorStop(1,c[2]);
+ const geometry = new THREE.BufferGeometry();
 
-    ctx.fillStyle=gradient;
-    ctx.fillRect(0,0,renderWidth,renderHeight);
+ const positions=[];
 
-    // 3D glowing orbs
+ for(let i=0;i<700;i++){
 
-    for(let i=0;i<4;i++){
+  positions.push(
+   (Math.random()-0.5)*15,
+   Math.random()*12,
+   (Math.random()-0.5)*10
+  );
 
-        let x=renderWidth/2+
-        Math.sin(time/2500+i*2)*renderWidth*.4;
+ }
 
-        let y=renderHeight/2+
-        Math.cos(time/2200+i)*renderHeight*.3;
+ geometry.setAttribute(
+  "position",
+  new THREE.Float32BufferAttribute(positions,3)
+ );
 
-        let radius=200+Math.sin(time/1000+i)*50;
+ const material = new THREE.PointsMaterial({
+  color:0x9ccfff,
+  size:0.035,
+  transparent:true,
+  opacity:0.6
+ });
 
-        let glow=ctx.createRadialGradient(
-            x,y,5,x,y,radius
-        );
+ const rainPoints = new THREE.Points(geometry,material);
 
-        glow.addColorStop(0,"rgba(255,255,255,.18)");
-        glow.addColorStop(1,"rgba(255,255,255,0)");
+ scene.add(rainPoints);
+ rain.push(rainPoints);
 
-        ctx.fillStyle=glow;
-        ctx.fillRect(
-            x-radius,y-radius,
-            radius*2,radius*2
-        );
-    }
-
-    // Floating particles
-
-    particles.forEach(p=>{
-
-        p.y-=p.speed;
-
-        p.x+=Math.sin(time/1000+p.y/100)*.5;
-
-        if(p.y<0){
-            p.y=renderHeight;
-            p.x=random(0,renderWidth);
-        }
-
-        ctx.globalAlpha=p.alpha;
-        ctx.fillStyle="#ffffff";
-
-        ctx.beginPath();
-        ctx.arc(p.x,p.y,p.size,0,Math.PI*2);
-        ctx.fill();
-    });
-
-    ctx.globalAlpha=1;
-
-    // Twinkling stars
-
-    stars.forEach(s=>{
-
-        let alpha=.3+.7*Math.abs(
-            Math.sin(time/600+s.phase)
-        );
-
-        ctx.globalAlpha=alpha;
-        ctx.fillStyle="white";
-
-        ctx.beginPath();
-        ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
-        ctx.fill();
-    });
-
-    ctx.globalAlpha=1;
-
-    // 3D perspective floor
-
-    ctx.save();
-
-    ctx.strokeStyle="rgba(255,255,255,.12)";
-    ctx.lineWidth=2;
-
-    let horizon=renderHeight*.72;
-
-    for(let i=0;i<13;i++){
-
-        let y=horizon+
-        Math.pow(i/12,2)*renderHeight*.28;
-
-        ctx.beginPath();
-        ctx.moveTo(0,y);
-        ctx.lineTo(renderWidth,y);
-        ctx.stroke();
-    }
-
-    for(let i=0;i<=12;i++){
-
-        let x=renderWidth/2+(i-6)*renderWidth*.18;
-
-        ctx.beginPath();
-        ctx.moveTo(renderWidth/2,horizon);
-        ctx.lineTo(x,renderHeight);
-        ctx.stroke();
-    }
-
-    ctx.restore();
 }
 
-function drawLyrics(text,time){
 
-    let fade=Math.min(1,(time-startedAt)/1000);
+// ==================================
+// DETECT MOOD
+// ==================================
 
-    let scale=.75+fade*.25;
+function detectMood(){
 
-    ctx.save();
+ const selected=moodInput.value;
 
-    ctx.translate(renderWidth/2,renderHeight*.49);
-    ctx.scale(scale,scale);
+ if(selected!=="auto"){
+  return selected;
+ }
 
-    ctx.globalAlpha=fade;
+ const text=lyricsInput.value.toLowerCase();
 
-    ctx.textAlign="center";
-    ctx.textBaseline="middle";
+ if(/love|heart|romantic|pyaar|mohabbat|ishq|sanam/.test(text)){
+  return "romantic";
+ }
 
-    let words=text.split(/\s+/);
-    let rows=[];
-    let row="";
+ if(/sad|cry|alone|broken|yaad|dard|tanha|aansu/.test(text)){
+  return "sad";
+ }
 
-    ctx.font="bold 48px Arial";
+ if(/success|dream|never give|jeet|himmat|manzil|struggle/.test(text)){
+  return "motivational";
+ }
 
-    words.forEach(word=>{
+ if(/happy|smile|dance|khushi|muskur/.test(text)){
+  return "happy";
+ }
 
-        let test=row?row+" "+word:word;
-
-        if(ctx.measureText(test).width>renderWidth*.82){
-            rows.push(row);
-            row=word;
-        }else{
-            row=test;
-        }
-
-    });
-
-    if(row) rows.push(row);
-
-    let height=65;
-    let start=-(rows.length-1)*height/2;
-
-    rows.forEach((line,i)=>{
-
-        let y=start+i*height;
-
-        // 3D text shadow
-
-        for(let j=8;j>=1;j--){
-
-            ctx.fillStyle="rgba(0,0,0,.15)";
-            ctx.fillText(line,j*2,y+j*2);
-        }
-
-        ctx.shadowColor="#ffffff";
-        ctx.shadowBlur=25;
-
-        let textGradient=ctx.createLinearGradient(
-            0,-30,0,40
-        );
-
-        textGradient.addColorStop(0,"#ffffff");
-        textGradient.addColorStop(.5,"#b9eaff");
-        textGradient.addColorStop(1,"#ff9de2");
-
-        ctx.fillStyle=textGradient;
-        ctx.fillText(line,0,y);
-
-    });
-
-    ctx.restore();
-
-    ctx.globalAlpha=1;
+ return "dark";
 }
 
-function drawScene(time,line,index){
 
-    let mode=document.getElementById("theme").value;
+// ==================================
+// CHANGE SCENE
+// ==================================
 
-    let theme=mode==="auto"
-        ?detectTheme(line)
-        :mode;
+function updateSceneMood(){
 
-    currentTheme=theme;
+ const settings={
 
-    background(time,theme);
+  sad:{
+   background:0x09152c,
+   light:0x5599ff,
+   rain:true
+  },
 
-    // Song title
+  romantic:{
+   background:0x38152d,
+   light:0xff77aa,
+   rain:false
+  },
 
-    ctx.textAlign="center";
-    ctx.font="bold 25px Arial";
-    ctx.fillStyle="rgba(255,255,255,.8)";
+  motivational:{
+   background:0x3b240b,
+   light:0xffb347,
+   rain:false
+  },
 
-    ctx.fillText(
-        document.getElementById("title").value||"MY MUSIC",
-        renderWidth/2,
-        100
-    );
+  happy:{
+   background:0x142e3c,
+   light:0x00ffff,
+   rain:false
+  },
 
-    // Scene number
+  dark:{
+   background:0x090915,
+   light:0x9c65ff,
+   rain:false
+  }
 
-    ctx.font="18px Arial";
-    ctx.fillStyle="rgba(255,255,255,.5)";
+ };
 
-    ctx.fillText(
-        "SCENE "+(index+1),
-        renderWidth/2,
-        145
-    );
+ const setting=settings[currentMood] || settings.dark;
 
-    drawLyrics(line,time);
+ scene.background.setHex(setting.background);
 
-    // Cinematic footer
+ scene.children.forEach(obj=>{
 
-    ctx.font="20px Arial";
-    ctx.fillStyle="rgba(255,255,255,.65)";
+  if(obj.isPointLight && obj!==scene.children[1]){
+   obj.color.setHex(setting.light);
+  }
 
-    ctx.fillText(
-        "♪ MUSIC VIDEO ♪",
-        renderWidth/2,
-        renderHeight-100
-    );
+ });
+
+ if(rain[0]){
+  rain[0].visible=setting.rain;
+ }
+
 }
 
-function parseLyrics(text,totalDuration){
 
-    const result=[];
+// ==================================
+// PREPARE LYRICS
+// ==================================
 
-    const rows=text.split("\n").map(x=>x.trim()).filter(Boolean);
+function prepareLyrics(){
 
-    const timestampRegex=/^\[(\d{1,2}):(\d{2})\]\s*(.+)$/;
+ const text=lyricsInput.value.trim();
 
-    let hasTimestamps=rows.some(x=>timestampRegex.test(x));
+ if(!text){
+  throw new Error("Please enter song lyrics.");
+ }
 
-    if(hasTimestamps){
+ lyrics=text
+ .split(/\n/)
+ .map(line=>line.trim())
+ .filter(line=>line.length>0);
 
-        rows.forEach(row=>{
+ if(lyrics.length===0){
+  throw new Error("Lyrics are empty.");
+ }
 
-            let match=row.match(timestampRegex);
+ currentLine=lyrics[0];
 
-            if(match){
-
-                let time=Number(match[1])*60+Number(match[2]);
-
-                result.push({
-                    time:time,
-                    text:match[3]
-                });
-
-            }else{
-
-                result.push({
-                    time:null,
-                    text:row
-                });
-
-            }
-        });
-
-        let valid=result.filter(x=>x.time!==null);
-
-        if(valid.length===result.length){
-
-            return result.sort((a,b)=>a.time-b.time);
-
-        }
-    }
-
-    return rows.map((text,index)=>({
-
-        time:index*totalDuration/rows.length,
-        text:text
-
-    }));
 }
 
-function getCurrentLine(time){
 
-    let index=0;
+// ==================================
+// SYNC LYRICS
+// ==================================
 
-    for(let i=0;i<timedLyrics.length;i++){
+function updateLyrics(){
 
-        if(time>=timedLyrics[i].time){
-            index=i;
-        }else{
-            break;
-        }
-    }
+ if(!audio.duration || !lyrics.length) return;
 
-    return index;
+ const progress=audio.currentTime/audio.duration;
+
+ const index=Math.min(
+  lyrics.length-1,
+  Math.floor(progress*lyrics.length)
+ );
+
+ currentLine=lyrics[index] || "";
+
 }
 
-async function generateVideo(){
 
-    if(recording) return;
+// ==================================
+// DRAW FINAL VIDEO
+// ==================================
 
-    const musicFile=document.getElementById("music").files[0];
+function drawFinalFrame(){
 
-    const lyrics=document.getElementById("lyrics").value.trim();
+ ctx.clearRect(0,0,W,H);
 
-    if(!musicFile){
-        alert("Please upload your song first!");
-        return;
-    }
+ ctx.drawImage(renderer.domElement,0,0,W,H);
 
-    if(!lyrics){
-        alert("Please enter song lyrics!");
-        return;
-    }
+ // Cinematic dark overlay
 
-    const button=document.getElementById("generate");
+ const gradient=ctx.createLinearGradient(
+  0,0,0,H
+ );
 
-    button.disabled=true;
+ gradient.addColorStop(0,"rgba(0,0,0,0.08)");
+ gradient.addColorStop(0.65,"rgba(0,0,0,0.05)");
+ gradient.addColorStop(1,"rgba(0,0,0,0.85)");
 
-    try{
+ ctx.fillStyle=gradient;
+ ctx.fillRect(0,0,W,H);
 
-        if(audio){
-            audio.pause();
-            audio=null;
-        }
+ // Top title
 
-        const url=URL.createObjectURL(musicFile);
+ ctx.textAlign="center";
 
-        audio=new Audio(url);
-        audio.preload="auto";
+ ctx.font="bold 35px Arial";
+ ctx.fillStyle="rgba(255,255,255,0.85)";
 
-        await new Promise((resolve,reject)=>{
+ ctx.fillText("CINEMATIC MUSIC VIDEO",W/2,90);
 
-            audio.onloadedmetadata=resolve;
-            audio.onerror=reject;
+ // Lyrics
 
-        });
+ ctx.font="bold 43px Arial";
 
-        if(!isFinite(audio.duration)||audio.duration<=0){
-            throw new Error("Audio duration could not be detected.");
-        }
+ ctx.shadowColor="#00d9ff";
+ ctx.shadowBlur=20;
 
-        // Maximum 5 minutes
+ ctx.fillStyle="#ffffff";
 
-        duration=Math.min(audio.duration,300);
+ wrapText(
+  currentLine,
+  W/2,
+  H-260,
+  W-100,
+  58
+ );
 
-        timedLyrics=parseLyrics(lyrics,duration);
+ ctx.shadowBlur=0;
 
-        if(timedLyrics.length===0){
-            throw new Error("No lyrics found.");
-        }
+ // Bottom branding
 
-        // Set quality
+ ctx.font="22px Arial";
+ ctx.fillStyle="rgba(255,255,255,0.6)";
 
-        const quality=document.getElementById("quality").value;
+ ctx.fillText(
+  "AI LYRICS VIDEO",
+  W/2,
+  H-70
+ );
 
-        if(quality==="high"){
-            renderWidth=1080;
-            renderHeight=1920;
-        }else{
-            renderWidth=720;
-            renderHeight=1280;
-        }
-
-        canvas.width=renderWidth;
-        canvas.height=renderHeight;
-
-        createParticles();
-
-        // Audio setup
-
-        audioContext=new (
-            window.AudioContext||window.webkitAudioContext
-        )();
-
-        await audioContext.resume();
-
-        const source=audioContext.createMediaElementSource(audio);
-
-        const audioDestination=audioContext.createMediaStreamDestination();
-
-        const gain=audioContext.createGain();
-
-        gain.gain.value=1;
-
-        source.connect(gain);
-
-        gain.connect(audioDestination);
-
-        // Stream setup
-
-        videoStream=canvas.captureStream(30);
-
-        audioDestination.stream.getAudioTracks().forEach(track=>{
-            videoStream.addTrack(track);
-        });
-
-        let mime="video/webm;codecs=vp9";
-
-        if(!MediaRecorder.isTypeSupported(mime)){
-            mime="video/webm;codecs=vp8";
-        }
-
-        if(!MediaRecorder.isTypeSupported(mime)){
-            mime="video/webm";
-        }
-
-        recorder=new MediaRecorder(videoStream,{
-            mimeType:mime,
-            videoBitsPerSecond:6000000,
-            audioBitsPerSecond:192000
-        });
-
-        chunks=[];
-
-        recorder.ondataavailable=e=>{
-            if(e.data.size>0){
-                chunks.push(e.data);
-            }
-        };
-
-        recorder.onstop=()=>{
-
-            const blob=new Blob(chunks,{
-                type:"video/webm"
-            });
-
-            const downloadURL=URL.createObjectURL(blob);
-
-            const download=document.getElementById("download");
-
-            download.style.display="block";
-
-            download.onclick=()=>{
-
-                const a=document.createElement("a");
-
-                a.href=downloadURL;
-                a.download="3D-Music-Video.webm";
-
-                a.click();
-
-            };
-
-            document.getElementById("status").innerText=
-                "✅ Video successfully generated!";
-
-            button.disabled=false;
-
-            videoStream.getTracks().forEach(track=>track.stop());
-
-            audio.pause();
-
-            audioContext.close();
-
-        };
-
-        recording=true;
-
-        document.getElementById("download").style.display="none";
-
-        document.getElementById("status").innerText=
-            "🎬 Recording your music video...";
-
-        startedAt=performance.now();
-
-        await audio.play();
-
-        recorder.start();
-
-        render();
-
-    }catch(error){
-
-        recording=false;
-
-        button.disabled=false;
-
-        document.getElementById("status").innerText=
-            "Error: "+error.message;
-
-        console.error(error);
-
-        if(audioContext){
-            audioContext.close().catch(()=>{});
-        }
-
-        if(audio){
-            audio.pause();
-        }
-
-    }
 }
 
-function render(){
 
-    if(!recording) return;
+// ==================================
+// WRAP TEXT
+// ==================================
 
-    const elapsed=audio.currentTime;
+function wrapText(text,x,y,maxWidth,lineHeight){
 
-    if(elapsed>=duration||audio.ended){
+ const words=text.split(" ");
 
-        stopVideo();
-        return;
-    }
+ let line="";
+ let lines=[];
 
-    const index=getCurrentLine(elapsed);
+ for(let word of words){
 
-    const line=timedLyrics[index].text;
+  const test=line+word+" ";
 
-    if(index!==currentScene){
+  if(ctx.measureText(test).width>maxWidth && line){
 
-        currentScene=index;
+   lines.push(line.trim());
+   line=word+" ";
 
-        createParticles();
-    }
+  }else{
 
-    drawScene(performance.now(),line,index);
+   line=test;
 
-    let progress=(elapsed/duration)*100;
+  }
 
-    document.getElementById("bar").style.width=
-        progress+"%";
+ }
 
-    document.getElementById("status").innerText=
-        "🎵 Creating Video: "+
-        Math.floor(elapsed)+" / "+
-        Math.floor(duration)+" seconds";
+ if(line) lines.push(line.trim());
 
-    raf=requestAnimationFrame(render);
+ const start=y-(lines.length-1)*lineHeight/2;
+
+ lines.forEach((l,i)=>{
+  ctx.fillText(l,x,start+i*lineHeight);
+ });
+
 }
 
-function stopVideo(){
 
-    if(!recording) return;
+// ==================================
+// ANIMATION
+// ==================================
 
-    recording=false;
+function animate(){
 
-    cancelAnimationFrame(raf);
+ if(!running) return;
 
-    if(recorder&&recorder.state==="recording"){
-        recorder.stop();
-    }
+ animationId=requestAnimationFrame(animate);
+
+ const t=performance.now()*0.001;
+
+ // Character movement
+
+ if(character){
+
+  character.position.y=Math.sin(t*2)*0.04;
+
+  character.rotation.y=Math.sin(t*0.5)*0.15;
+
+  character.userData.leftArm.rotation.z=
+   Math.sin(t*2)*0.12;
+
+  character.userData.rightArm.rotation.z=
+   -Math.sin(t*2)*0.12;
+
+  character.userData.leftLeg.rotation.x=
+   Math.sin(t*2)*0.05;
+
+  character.userData.rightLeg.rotation.x=
+   -Math.sin(t*2)*0.05;
+
+ }
+
+ // Camera cinematic movement
+
+ camera.position.x=Math.sin(t*0.25)*0.35;
+
+ camera.position.y=2.2+Math.sin(t*0.5)*0.12;
+
+ camera.lookAt(0,1.3,0);
+
+ // Particles movement
+
+ particles.forEach((p,i)=>{
+
+  p.position.y+=0.008;
+
+  if(p.position.y>9){
+   p.position.y=0;
+  }
+
+  p.position.x+=Math.sin(t+i)*0.001;
+
+ });
+
+ // Rain movement
+
+ if(rain[0] && rain[0].visible){
+
+  const pos=rain[0].geometry.attributes.position;
+
+  for(let i=0;i<pos.count;i++){
+
+   pos.array[i*3+1]-=0.15;
+
+   if(pos.array[i*3+1]<-1){
+    pos.array[i*3+1]=12;
+   }
+
+  }
+
+  pos.needsUpdate=true;
+
+ }
+
+ updateLyrics();
+
+ renderer.render(scene,camera);
+
+ drawFinalFrame();
+
+ if(recording && audio.currentTime>=videoLimit){
+
+  stopRecording();
+
+ }
+
 }
 
-drawScene(0,"Your Music Video",0);
-createParticles();
+
+// ==================================
+// LOAD SONG
+// ==================================
+
+songInput.addEventListener("change",()=>{
+
+ const file=songInput.files[0];
+
+ if(!file) return;
+
+ audio.src=URL.createObjectURL(file);
+
+ statusText.innerText="Song loaded: "+file.name;
+
+});
+
+
+// ==================================
+// START PREVIEW
+// ==================================
+
+document.getElementById("previewBtn").onclick=async()=>{
+
+ try{
+
+  if(!songInput.files[0]){
+   throw new Error("Please upload a song first.");
+  }
+
+  prepareLyrics();
+
+  initialize3D();
+
+  currentMood=detectMood();
+
+  updateSceneMood();
+
+  videoLimit=Math.min(
+   audio.duration || 300,
+   300
+  );
+
+  running=true;
+
+  audio.currentTime=0;
+
+  await audio.play();
+
+  animate();
+
+  statusText.innerText=
+   "Preview running | Mood: "+currentMood;
+
+ }catch(e){
+
+  statusText.innerText=e.message;
+
+ }
+
+};
+
+
+// ==================================
+// RECORD VIDEO
+// ==================================
+
+document.getElementById("createBtn").onclick=async()=>{
+
+ try{
+
+  if(!songInput.files[0]){
+   throw new Error("Please upload a song first.");
+  }
+
+  prepareLyrics();
+
+  initialize3D();
+
+  currentMood=detectMood();
+
+  updateSceneMood();
+
+  if(!audio.duration){
+   await new Promise((resolve,reject)=>{
+
+    audio.addEventListener("loadedmetadata",resolve,{once:true});
+
+    audio.addEventListener("error",()=>reject(
+     new Error("Song could not be loaded.")
+    ),{once:true});
+
+   });
+  }
+
+  const selectedDuration=document.getElementById("duration").value;
+
+  if(selectedDuration==="song"){
+   videoLimit=Math.min(audio.duration,300);
+  }else{
+   videoLimit=Math.min(
+    Number(selectedDuration),
+    audio.duration,
+    300
+   );
+  }
+
+  if(videoLimit<=0){
+   throw new Error("Invalid song duration.");
+  }
+
+  if(!audioContext){
+
+   audioContext=new AudioContext();
+
+   audioSource=audioContext.createMediaElementSource(audio);
+
+   audioDestination=audioContext.createMediaStreamDestination();
+
+   audioSource.connect(audioContext.destination);
+
+   audioSource.connect(audioDestination);
+
+  }
+
+  await audioContext.resume();
+
+  const canvasStream=outputCanvas.captureStream(30);
+
+  const audioTracks=audioDestination.stream.getAudioTracks();
+
+  const combinedStream=new MediaStream([
+   ...canvasStream.getVideoTracks(),
+   ...audioTracks
+  ]);
+
+  let mimeType="video/webm";
+
+  if(MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus")){
+   mimeType="video/webm;codecs=vp9,opus";
+  }else if(MediaRecorder.isTypeSupported("video/webm;codecs=vp8,opus")){
+   mimeType="video/webm;codecs=vp8,opus";
+  }
+
+  recorder=new MediaRecorder(
+   combinedStream,
+   {mimeType}
+  );
+
+  recordedChunks=[];
+
+  recorder.ondataavailable=(event)=>{
+
+   if(event.data.size>0){
+    recordedChunks.push(event.data);
+   }
+
+  };
+
+  recorder.onstop=()=>{
+
+   const blob=new Blob(
+    recordedChunks,
+    {type:"video/webm"}
+   );
+
+   const url=URL.createObjectURL(blob);
+
+   const link=document.createElement("a");
+
+   link.href=url;
+   link.download="AI_Music_Video.webm";
+
+   link.click();
+
+   document.getElementById("downloadBtn").disabled=false;
+
+   statusText.innerText=
+    "Video ready! Download started.";
+
+  };
+
+  audio.currentTime=0;
+
+  running=true;
+
+  recorder.start(1000);
+
+  recording=true;
+
+  await audio.play();
+
+  animate();
+
+  document.getElementById("createBtn").disabled=true;
+
+  document.getElementById("stopBtn").disabled=false;
+
+  statusText.innerText=
+   "Recording started! Please wait until video finishes.";
+
+ }catch(e){
+
+  statusText.innerText=e.message;
+
+ }
+
+};
+
+
+// ==================================
+// STOP RECORDING
+// ==================================
+
+function stopRecording(){
+
+ if(recorder && recorder.state!=="inactive"){
+
+  recorder.stop();
+
+ }
+
+ recording=false;
+ running=false;
+
+ audio.pause();
+
+ document.getElementById("createBtn").disabled=false;
+
+ document.getElementById("stopBtn").disabled=true;
+
+}
+
+
+// ==================================
+// STOP BUTTON
+// ==================================
+
+document.getElementById("stopBtn").onclick=()=>{
+
+ stopRecording();
+
+ statusText.innerText="Recording stopped.";
+
+};
+
+
+// ==================================
+// DOWNLOAD BUTTON
+// ==================================
+
+document.getElementById("downloadBtn").onclick=()=>{
+
+ if(!recordedChunks.length) return;
+
+ const blob=new Blob(
+  recordedChunks,
+  {type:"video/webm"}
+ );
+
+ const url=URL.createObjectURL(blob);
+
+ const a=document.createElement("a");
+
+ a.href=url;
+ a.download="AI_Music_Video.webm";
+
+ a.click();
+
+};
+
+
+// ==================================
+// INITIAL SCREEN
+// ==================================
+
+initialize3D();
+
+renderer.render(scene,camera);
+
+drawFinalFrame();
 
 </script>
 
